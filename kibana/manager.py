@@ -216,9 +216,9 @@ class KibanaManager():
 
     def get_objects(self, search_field, search_val):
         """Return all objects of type (assumes < MAX_HITS)"""
-        query = ("{ size: " + str(self.max_hits) + ", " +
-                 "query: { filtered: { filter: { " +
-                 search_field + ": { value: \"" + search_val + "\"" +
+        query = ("{ \"size\": " + str(self.max_hits) + ", " +
+                 "\"query\": { \"bool\": { \"filter\": { \"" +
+                 search_field + "\": { \"value\": \"" + search_val + "\"" +
                  " } } } } } }")
         self.connect_es()
         res = self.es.search(index=self.index, body=query)
@@ -258,11 +258,13 @@ class KibanaManager():
         dashboards = self.get_objects("type", "dashboard")
         vizs = self.get_objects("type", "visualization")
         searches = self.get_objects("type", "search")
-        if db_name not in dashboards:
-            return None
-        self.pr_inf("Found dashboard: " + db_name)
-        objects[db_name] = dashboards[db_name]
-        panels = json.loads(dashboards[db_name]['_source']['panelsJSON'])
+        dashboard_name_to_id = {val['_source']['title']:val['_id'] for db, val in dashboards.items()}
+	 if db_name not in dashboard_name_to_id:
+	     return None
+        db_id = dashboard_name_to_id[db_name]
+	 self.pr_inf("Found dashboard: " + db_name)
+        objects[db_name] = dashboards[db_id]
+        panels = json.loads(dashboards[db_id]['_source']['panelsJSON'])
         for panel in panels:
             if 'id' not in panel:
                 continue
