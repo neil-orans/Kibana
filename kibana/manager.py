@@ -259,10 +259,10 @@ class KibanaManager():
         vizs = self.get_objects("type", "visualization")
         searches = self.get_objects("type", "search")
         dashboard_name_to_id = {val['_source']['title']:val['_id'] for db, val in dashboards.items()}
-	 if db_name not in dashboard_name_to_id:
-	     return None
+        if db_name not in dashboard_name_to_id:
+            return None
         db_id = dashboard_name_to_id[db_name]
-	 self.pr_inf("Found dashboard: " + db_name)
+        self.pr_inf("Found dashboard: " + db_name)
         objects[db_name] = dashboards[db_id]
         panels = json.loads(dashboards[db_id]['_source']['panelsJSON'])
         for panel in panels:
