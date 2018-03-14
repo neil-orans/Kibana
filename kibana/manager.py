@@ -270,10 +270,12 @@ class KibanaManager():
                 continue
             pid = panel['id']
             if pid in searches:
-                self.pr_inf("Found search:    " + pid)
+                search_name = searches[pid]['_source']['title']
+                self.pr_inf("Found search:    " + search_name)
                 objects[pid] = searches[pid]
             elif pid in vizs:
-                self.pr_inf("Found vis:       " + pid)
+                viz_name = vizs[pid]['_source']['title']
+                self.pr_inf("Found vis:       " + viz_name)
                 objects[pid] = vizs[pid]
                 emb = vizs[pid].get('_source', {}).get('savedSearchId', None)
                 if emb is not None and emb not in objects:
